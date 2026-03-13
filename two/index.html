@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>비밀번호 생성기</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>비밀번호 생성기</h2>
+
+<button class="generate-btn" onclick="generate()">생성</button>
+
+<p>1. 대문자+소문자+숫자+특수문자</p>
+<div class="password-row">
+<span id="p1" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p1',this)">복사</button>
+</div>
+
+<p>2. 대문자+소문자+특수문자</p>
+<div class="password-row">
+<span id="p2" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p2',this)">복사</button>
+</div>
+
+<p>3. 대문자+소문자+숫자</p>
+<div class="password-row">
+<span id="p3" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p3',this)">복사</button>
+</div>
+
+<p>4. 소문자+숫자+특수문자</p>
+<div class="password-row">
+<span id="p4" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p4',this)">복사</button>
+</div>
+
+<p>5. 소문자+특수문자</p>
+<div class="password-row">
+<span id="p5" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p5',this)">복사</button>
+</div>
+
+<p>6. 소문자+숫자</p>
+<div class="password-row">
+<span id="p6" class="password-text"></span>
+<button class="copy-btn" onclick="copy('p6',this)">복사</button>
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
