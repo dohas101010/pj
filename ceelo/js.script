@@ -1,0 +1,181 @@
+let players = [];
+let parentIndex = 0;
+let currentPlayer = 0;
+let pot = 0;
+let phase = "setup";
+
+function rollDice() {
+  return Math.floor(Math.random() * 6) + 1;
+}
+
+function startGame() {
+  const count = Number(document.getElementById("playerCount").value);
+  const chips = Number(document.getElementById("startChips").value);
+
+  players = [];
+  for (let i = 0; i < count; i++) {
+    players.push({
+      name: "P" + (i + 1),
+      chips: chips,
+      bet: 0,
+      dice: [],
+      score: 0
+    });
+  }
+
+  document.getElementById("setup").style.display = "none";
+  document.getElementById("game").style.display = "block";
+
+  log("게임 시작! 선을 정하세요 🎲");
+  phase = "decide";
+  updateUI();
+}
+
+// 👑 선 정하기
+function decideParent() {
+  if (phase !== "decide") return;
+
+  let rolls = players.map(p => ({
+    player: p,
+    value: rollDice()
+  }));
+
+  rolls.forEach(r => {
+    log(`${r.player.name} → 🎲 ${r.value}`);
+  });
+
+  rolls.sort((a, b) => b.value - a.value);
+  parentIndex = players.indexOf(rolls[0].player);
+
+  log(`👑 선: ${players[parentIndex].name}`);
+
+  phase = "betting";
+  currentPlayer = 0;
+
+  document.getElementById("betArea").style.display = "block";
+  updateUI();
+}
+
+// 💰 베팅
+function placeBet() {
+  if (phase !== "betting") return;
+
+  const amount = Number(document.getElementById("betAmount").value);
+  const p = players[currentPlayer];
+
+  if (amount <= 0 || amount > p.chips) {
+    alert("베팅 불가!");
+    return;
+  }
+
+  p.chips -= amount;
+  p.bet = amount;
+  pot += amount;
+
+  log(`${p.name} 베팅: ${amount}`);
+
+  currentPlayer++;
+
+  if (currentPlayer >= players.length) {
+    phase = "playing";
+    document.getElementById("betArea").style.display = "none";
+    document.getElementById("playBtn").style.display = "inline-block";
+    log("모든 베팅 완료! 게임 시작 🎲");
+  }
+
+  updateUI();
+}
+
+// 🎲 족보
+function getScore(dice) {
+  let sorted = [...dice].sort();
+
+  if (sorted.join() === "1,1,1") return 110;
+  if (sorted.join() === "4,5,6") return 100;
+  if (sorted.join() === "1,2,3") return 0;
+
+  if (dice[0] === dice[1] && dice[1] === dice[2]) {
+    return 90 + dice[0];
+  }
+
+  if (dice[0] === dice[1]) return dice[2];
+  if (dice[1] === dice[2]) return dice[0];
+  if (dice[0] === dice[2]) return dice[1];
+
+  return -1;
+}
+
+// 🎮 게임 진행
+function playRound() {
+  if (phase !== "playing") return;
+
+  log("🎲 게임 시작!");
+
+  players.forEach(p => {
+    p.dice = [rollDice(), rollDice(), rollDice()];
+    p.score = getScore(p.dice);
+
+    log(`${p.name}: ${p.dice.join(",")} → 점수 ${p.score}`);
+  });
+
+  let winner = players.reduce((a, b) =>
+    a.score > b.score ? a : b
+  );
+
+  log(`🏆 승자: ${winner.name}`);
+
+  winner.chips += pot;
+
+  players.forEach(p => p.bet = 0);
+  pot = 0;
+
+  // ⭐ 게임 종료 체크 (핵심)
+  if (checkGameEnd()) return;
+
+  phase = "betting";
+  currentPlayer = 0;
+
+  document.getElementById("betArea").style.display = "block";
+  document.getElementById("playBtn").style.display = "none";
+
+  updateUI();
+}
+
+// 🏁 게임 종료 조건
+function checkGameEnd() {
+  let losers = players.filter(p => p.chips === 0);
+
+  if (losers.length > 0) {
+    let winner = players.reduce((a, b) =>
+      a.chips > b.chips ? a : b
+    );
+
+    log(`💀 탈락 발생!`);
+    log(`🏆 최종 승자: ${winner.name}`);
+
+    alert(`게임 종료!\n승자: ${winner.name}`);
+    location.reload();
+    return true;
+  }
+
+  return false;
+}
+
+// 🖥 UI
+function updateUI() {
+  document.getElementById("status").innerText =
+    `선: ${players[parentIndex]?.name || "-"}`;
+
+  let html = "";
+  players.forEach(p => {
+    html += `<div>${p.name} | 💰${p.chips}</div>`;
+  });
+
+  document.getElementById("players").innerHTML = html;
+}
+
+// 📜 로그
+function log(msg) {
+  const logBox = document.getElementById("log");
+  logBox.textContent += msg + "\n";
+}
