@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>친치로</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎲 친치로</h1>
+
+<div id="setup">
+  <label>플레이어 수:
+    <input type="number" id="playerCount" value="2" min="2" max="6">
+  </label>
+  <label>초기 칩:
+    <input type="number" id="startChips" value="1000">
+  </label>
+  <button onclick="startGame()">게임 시작</button>
+</div>
+
+<div id="game" style="display:none;">
+  <h2 id="status"></h2>
+  <div id="players"></div>
+
+  <button onclick="decideParent()">🎲 선 정하기</button>
+
+  <div id="betArea" style="display:none;">
+    <input type="number" id="betAmount" placeholder="베팅">
+    <button onclick="placeBet()">베팅</button>
+  </div>
+
+  <button onclick="playRound()" id="playBtn" style="display:none;">
+    🎲 게임 시작
+  </button>
+
+  <pre id="log"></pre>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
